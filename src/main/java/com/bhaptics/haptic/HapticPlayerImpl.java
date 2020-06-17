@@ -1,12 +1,17 @@
 package com.bhaptics.haptic;
 
 import com.bhaptics.haptic.models.*;
+import com.bhaptics.haptic.models.tact.HapticFeedbackFile;
+import com.bhaptics.haptic.utils.HapticPlayerCallback;
 import com.bhaptics.haptic.utils.LogUtils;
 import com.bhaptics.haptic.utils.StringUtils;
 import com.google.gson.Gson;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class HapticPlayerImpl implements HapticPlayer {
@@ -14,19 +19,56 @@ public class HapticPlayerImpl implements HapticPlayer {
     private EasyClient client;
     private boolean isConnected;
 
+    private String appId;
+    private String appName;
+    private boolean retryConnect;
+
+    private Gson gson = new Gson();
+
     public HapticPlayerImpl(String appId, String appName) {
+        this(appId, appName, false);
+    }
 
-        try {
-            System.out.println("HapticPlayer()");
-            client = new EasyClient(new URI(url+ "?app_id=" +
-                    StringUtils.encodeValue(appId) + "&app_name=" +
-                    StringUtils.encodeValue(appName)));
 
-            client.connect();
-
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
+    HapticPlayerCallback hapticPlayerCallback = new HapticPlayerCallback() {
+        @Override
+        public void onConnectionChange(boolean connected) {
+            isConnected = connected;
+            if (!isConnected) {
+                resetConnection();
+            }
         }
+    };
+
+    public HapticPlayerImpl(String appId, String appName, boolean retryConnect) {
+        this.appId = appId;
+        this.appName = appName;
+        this.retryConnect = true;
+
+        LogUtils.log("HapticPlayerImpl()");
+        resetConnection();
+
+    }
+
+    void resetConnection() {
+        new Thread( new Runnable() {
+            public void run()  {
+//                try  { Thread.sleep( 2000 ); }
+//                catch (InterruptedException ie)  {}
+                try {
+                    client = new EasyClient(new URI(url+ "?app_id=" +
+                            StringUtils.encodeValue(appId) + "&app_name=" +
+                            StringUtils.encodeValue(appName)));
+
+                    client.addHapticPlayerCallback(hapticPlayerCallback);
+                    client.connect();
+                } catch (URISyntaxException e) {
+                    LogUtils.logError("HapticPlayerImpl() " + e.getMessage(), e);
+                }
+            }
+        } ).start();
+
+
     }
 
     @Override
@@ -46,69 +88,114 @@ public class HapticPlayerImpl implements HapticPlayer {
 
     @Override
     public void register(String key, String fileContent) {
-        LogUtils.log("register " + key + ", " + fileContent);
-        Gson gson = new Gson();
+        LogUtils.trace("register " + key + ", " + fileContent);
 
-        Map<String, Object> o = gson.fromJson(fileContent, Map.class);
-
-
-
+        HapticFeedbackFile o = gson.fromJson(fileContent, HapticFeedbackFile.class);
 
         RegisterRequest req = new RegisterRequest(
-                key,  (o.get("project"))
+                key,  o.getProject()
         );
+        sendRegisterRequest(req);
+    }
+
+    private void sendRegisterRequest(RegisterRequest req) {
+        if (!isConnected) {
+            LogUtils.log("not connected.");
+            return;
+        }
 
         PlayerRequest playerRequest = new PlayerRequest();
         playerRequest.addRegister(req);
 
         client.send(gson.toJson(playerRequest));
-
     }
 
-    @Override
-    public void submit(String key, PositionType positionType, byte[] motorBytes, int durationMillis) {
-
-    }
-
-    @Override
-    public void submit(String key, PositionType positionType, PathPoint[] points, int durationMillis) {
-
-    }
-
-    @Override
-    public void submit(String key, PositionType positionType, DotPoint[] points, int durationMillis) {
-
-    }
-
-    @Override
-    public void submitRegistered(String key) {
-        LogUtils.log("submitRegistered: " + key);
-        Gson gson = new Gson();
-
-        SubmitRequest req = new SubmitRequest();
-        req.setKey(key);
-        req.setType("submit");
+    private void sendSubmitRequest(SubmitRequest req) {
+        if (!isConnected) {
+            LogUtils.log("not connected.");
+            return;
+        }
 
         PlayerRequest playerRequest = new PlayerRequest();
         playerRequest.addSubmit(req);
 
         client.send(gson.toJson(playerRequest));
+    }
+
+    @Override
+    public void submitPath(String key, PositionType positionType, List<PathPoint> points, int durationMillis) {
+        SubmitRequest req = new SubmitRequest();
+        req.setKey(key);
+        req.setType("frame");
+        Frame frame = new Frame();
+        frame.setDurationMillis(durationMillis);
+        frame.setPosition(positionType);
+        frame.setDotPoints(Arrays.asList());
+        frame.setPathPoints(points);
+        req.setFrame(frame);
+
+        sendSubmitRequest(req);
+    }
+
+    @Override
+    public void submitDot(String key, PositionType positionType, List<DotPoint> points, int durationMillis) {
+        SubmitRequest req = new SubmitRequest();
+        req.setKey(key);
+        req.setType("frame");
+        Frame frame = new Frame();
+        frame.setDurationMillis(durationMillis);
+        frame.setPosition(positionType);
+        frame.setDotPoints(points);
+        frame.setPathPoints(Arrays.asList());
+        req.setFrame(frame);
+
+        sendSubmitRequest(req);
+    }
+
+    @Override
+    public void submitRegistered(String key) {
+        LogUtils.log("submitRegistered: " + key);
+        SubmitRequest req = new SubmitRequest();
+        req.setKey(key);
+        req.setType("key");
+
+        sendSubmitRequest(req);
 
     }
 
     @Override
     public void submitRegistered(String key, String altKey, RotationOption rotationOption, ScaleOption scaleOption) {
+        LogUtils.log("submitRegistered: " + key);
 
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("altKey", altKey);
+        parameters.put("rotationOption", rotationOption);
+        parameters.put("scaleOption", scaleOption);
+
+        SubmitRequest req = new SubmitRequest();
+        req.setKey(key);
+        req.setType("key");
+        req.setParameters(parameters);
+
+        sendSubmitRequest(req);
     }
 
     @Override
     public void turnOff(String key) {
+        SubmitRequest req = new SubmitRequest();
+        req.setKey(key);
+        req.setType("turnOff");
 
+        sendSubmitRequest(req);
     }
 
     @Override
     public void turnOff() {
+        SubmitRequest req = new SubmitRequest();
+        req.setKey("");
+        req.setType("turnOffAll");
 
+        sendSubmitRequest(req);
     }
 
 }
