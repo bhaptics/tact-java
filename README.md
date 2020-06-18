@@ -1,21 +1,23 @@
 # tact-java
 JVM Library for bHaptics Haptic Devices
 
+For other languages or platforms, please check [this link.]( * https://github.com/bhaptics/haptic-library/wiki/bHaptics-Plugins)
+
 ### Prerequisite
-bHaptics Player has to be installed (window) and running.
-
-### Examples
+[bHaptics Player](https://www.bhaptics.com/download) has to be installed (window) and running. 
 
 
-### How to setup
+### Download
 
-[tact-java jar downloads]() are available.
+[tact-java jar downloads](https://github.com/bhaptics/tact-java/releases) are available here.
 
 ```
+
 ```
 
 ### Documentation
-
+  * [User guide](UserGuide.md): This guide contains examples on how to use tact-java in your code.
+  * [Change log](CHANGELOG.md): Changes in the recent versions
 ### Third party libraries
   * JSON Library: com.google.code.gson:gson:2.8.6
   * Websocket client library: org.java-websocket:Java-WebSocket:1.5.1
