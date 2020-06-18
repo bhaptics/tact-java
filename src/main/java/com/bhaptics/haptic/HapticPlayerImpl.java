@@ -90,6 +90,11 @@ public class HapticPlayerImpl implements HapticPlayer {
     @Override
     public void dispose() {
         LogUtils.log("dispose()");
+        try {
+            client.closeBlocking();
+        } catch (InterruptedException e) {
+            LogUtils.log("dispose()" + e.getMessage());
+        }
     }
 
     @Override
