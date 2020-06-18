@@ -14,14 +14,6 @@ repositories {
     jcenter()
 }
 
-javadoc {
-    if(JavaVersion.current().isJava8Compatible()) {
-        options.addBooleanOption('html5', true)
-    }
-}
-
-
-
 dependencies {
     implementation "org.java-websocket:Java-WebSocket:1.5.1"
     implementation 'com.google.code.gson:gson:2.8.6'
