@@ -2,21 +2,27 @@ plugins {
     id 'java'
 }
 
-apply plugin: 'cpp'
-
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-group 'com.bhaptics'
-version '0.1-SNAPSHOT'
+
+group GROUP_ID
+version VERSION
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
-dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.dll'])
+javadoc {
+    if(JavaVersion.current().isJava8Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+}
 
+
+
+dependencies {
     implementation "org.java-websocket:Java-WebSocket:1.5.1"
     implementation 'com.google.code.gson:gson:2.8.6'
     testCompile "org.slf4j:slf4j-simple:1.7.25"

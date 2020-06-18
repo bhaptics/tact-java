@@ -17,6 +17,7 @@ public class HapticPlayerTest extends TestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
+        LogUtils.log("sdfdsf");
         hapticPlayer = new HapticPlayerImpl("com.bhaptics.sample", "Sample Java App");
     }
 
