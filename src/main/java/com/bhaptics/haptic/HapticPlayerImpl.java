@@ -9,10 +9,7 @@ import com.google.gson.Gson;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class HapticPlayerImpl implements HapticPlayer {
     private String url = "ws://127.0.0.1:15881/v2/feedbacks";
@@ -25,8 +22,15 @@ public class HapticPlayerImpl implements HapticPlayer {
 
     private Gson gson = new Gson();
 
+    private List<HapticPlayerCallback> callbacks = new ArrayList<>();
+
     public HapticPlayerImpl(String appId, String appName) {
         this(appId, appName, false);
+    }
+
+    public HapticPlayerImpl(String appId, String appName, HapticPlayerCallback hapticPlayerCallback) {
+        this(appId, appName, false);
+        callbacks.add(hapticPlayerCallback);
     }
 
 
@@ -34,6 +38,10 @@ public class HapticPlayerImpl implements HapticPlayer {
         @Override
         public void onConnectionChange(boolean connected) {
             isConnected = connected;
+
+            for (HapticPlayerCallback callback : callbacks) {
+                callback.onConnectionChange(connected);
+            }
             if (!isConnected) {
                 resetConnection();
             }
@@ -43,28 +51,36 @@ public class HapticPlayerImpl implements HapticPlayer {
     public HapticPlayerImpl(String appId, String appName, boolean retryConnect) {
         this.appId = appId;
         this.appName = appName;
-        this.retryConnect = true;
+        this.retryConnect = retryConnect;
 
         LogUtils.log("HapticPlayerImpl()");
-        resetConnection();
+        connect();
 
     }
 
-    void resetConnection() {
-        new Thread( new Runnable() {
-            public void run()  {
-//                try  { Thread.sleep( 2000 ); }
-//                catch (InterruptedException ie)  {}
-                try {
-                    client = new EasyClient(new URI(url+ "?app_id=" +
-                            StringUtils.encodeValue(appId) + "&app_name=" +
-                            StringUtils.encodeValue(appName)));
+    private void connect() {
+        try {
+            client = new EasyClient(new URI(url+ "?app_id=" +
+                    StringUtils.encodeValue(appId) + "&app_name=" +
+                    StringUtils.encodeValue(appName)));
 
-                    client.addHapticPlayerCallback(hapticPlayerCallback);
-                    client.connect();
-                } catch (URISyntaxException e) {
-                    LogUtils.logError("HapticPlayerImpl() " + e.getMessage(), e);
+            client.addHapticPlayerCallback(hapticPlayerCallback);
+            client.connect();
+        } catch (URISyntaxException e) {
+            LogUtils.logError("HapticPlayerImpl() " + e.getMessage(), e);
+        }
+    }
+
+    void resetConnection() {
+        new Thread(() -> {
+            if (retryConnect) {
+                try  {
+                    Thread.sleep( 2000 );
                 }
+                catch (InterruptedException ie)  {
+                    LogUtils.trace(ie.getMessage());
+                }
+                connect();
             }
         } ).start();
 

@@ -17,8 +17,11 @@ public class HapticPlayerTest extends TestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        LogUtils.log("sdfdsf");
-        hapticPlayer = new HapticPlayerImpl("com.bhaptics.sample", "Sample Java App");
+        String appId = "com.bhaptics.sample";
+        String appName = "Sample Java App";
+        hapticPlayer = new HapticPlayerImpl(appId, appName, (connected) -> {
+            LogUtils.log("connected =========== " + connected);
+        });
     }
 
     @Override
@@ -54,24 +57,24 @@ public class HapticPlayerTest extends TestCase {
 
         sleep(2000);
 
-//        hapticPlayer.submitRegistered("test");
-//
-//        sleep(2000);
-//
-//        hapticPlayer.submitRegistered("test", "test2",
-//                new RotationOption(180, 0),
-//                new ScaleOption(1, 1));
-//
-//        sleep(200);
-//        hapticPlayer.turnOff("test2");
-//
-//        sleep(2000);
-//
-//        hapticPlayer.submitRegistered("test", "test2",
-//                new RotationOption(180, 0.3),
-//                new ScaleOption(1, 0.3));
-//
-//        sleep(5000);
+        hapticPlayer.submitRegistered("test");
+
+        sleep(2000);
+
+        hapticPlayer.submitRegistered("test", "test2",
+                new RotationOption(180, 0),
+                new ScaleOption(1, 1));
+
+        sleep(200);
+        hapticPlayer.turnOff("test2");
+
+        sleep(2000);
+
+        hapticPlayer.submitRegistered("test", "test2",
+                new RotationOption(180, 0.3),
+                new ScaleOption(1, 0.3));
+
+        sleep(5000);
 
 
         for (int motorIndex = 0; motorIndex < 20; motorIndex++) {
