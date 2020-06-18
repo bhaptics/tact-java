@@ -1,7 +1,6 @@
 package com.bhaptics.haptic;
 
 import com.bhaptics.haptic.models.*;
-import com.bhaptics.haptic.utils.LogUtils;
 import com.bhaptics.haptic.utils.StringUtils;
 import junit.framework.TestCase;
 
@@ -20,7 +19,7 @@ public class HapticPlayerTest extends TestCase {
         String appId = "com.bhaptics.sample";
         String appName = "Sample Java App";
         hapticPlayer = new HapticPlayerImpl(appId, appName, (connected) -> {
-            LogUtils.log("connected =========== " + connected);
+            System.out.println("connected =========== " + connected);
         });
     }
 

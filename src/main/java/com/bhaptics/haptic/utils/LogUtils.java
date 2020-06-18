@@ -6,9 +6,9 @@ public class LogUtils {
     }
 
     public static void log(String str) {
-        System.out.println(str);
+//        System.out.println(str);
     }
     public static void trace(String str) {
-        System.out.println(str);
+//        System.out.println(str);
     }
 }

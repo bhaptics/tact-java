@@ -1,7 +1,7 @@
 # tact-java
-JVM Library for bHaptics Haptic Devices
+JVM Library for bHaptics Haptic Devices.
 
-For other languages or platforms, please check [this link.]( * https://github.com/bhaptics/haptic-library/wiki/bHaptics-Plugins)
+For other languages or platforms, please check [this link.](https://github.com/bhaptics/haptic-library/wiki/bHaptics-Plugins)
 
 ### Prerequisite
 [bHaptics Player](https://www.bhaptics.com/download) has to be installed (window) and running. 
