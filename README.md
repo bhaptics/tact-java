@@ -11,7 +11,23 @@ For other languages or platforms, please check [this link.](https://github.com/b
 
 [tact-java jar downloads](https://github.com/bhaptics/tact-java/releases) are available here.
 
+For more detail on using the library, please check [samples/gradle-project/build.gralde.](samples/gradle-project/build.gradle)
+
 ```
+
+repositories {
+    ...
+    flatDir {
+        dirs 'libs' // folder of the jar file
+    }
+}
+
+dependencies {
+    ...
+    implementation name: 'tact-{Version}'
+    implementation "org.java-websocket:Java-WebSocket:1.5.1"
+    implementation 'com.google.code.gson:gson:2.8.6'
+}
 
 ```
 
