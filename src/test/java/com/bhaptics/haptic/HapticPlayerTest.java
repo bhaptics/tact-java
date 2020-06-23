@@ -38,38 +38,62 @@ public class HapticPlayerTest extends TestCase {
         }
     }
 
+    private void registerFiles() {
+        List<String> files = Arrays.asList(
+                "Explosion",
+                "skelettonArrow",
+                "skelettonArrowSmallFront",
+                "Explosion2",
+                "ArrowHit2");
+
+        for (String fileName : files) {
+            File file = new File(
+                    getClass().getClassLoader().getResource(fileName + ".tact").getFile()
+            );
+
+            String content = StringUtils.readFile(file);
+
+            hapticPlayer.register(fileName, content);
+        }
+    }
+
     public void testRegister() {
 
         // wait for connection
         sleep(1000);
 
-        // register file
-        File file = new File(
-                getClass().getClassLoader().getResource("Explosion.tact").getFile()
-        );
-
-        String content = StringUtils.readFile(file);
-
-        hapticPlayer.register("test", content);
+        registerFiles();
 
 
+
+        sleep(1000);
+        System.out.println("skelettonArrowSmallFront");
+
+        hapticPlayer.submitRegistered("skelettonArrowSmallFront");
 
         sleep(2000);
 
-        hapticPlayer.submitRegistered("test");
+        System.out.println("skelettonArrow");
+        hapticPlayer.submitRegistered("skelettonArrow");
 
         sleep(2000);
 
-        hapticPlayer.submitRegistered("test", "test2",
+        System.out.println("Explosion");
+        hapticPlayer.submitRegistered("Explosion");
+
+        sleep(2000);
+
+        hapticPlayer.submitRegistered("Explosion", "test2",
                 new RotationOption(180, 0),
                 new ScaleOption(1, 1));
 
         sleep(200);
+        System.out.println("test2");
         hapticPlayer.turnOff("test2");
 
         sleep(2000);
 
-        hapticPlayer.submitRegistered("test", "test2",
+        hapticPlayer.submitRegistered("ArrowHit2", "test2",
                 new RotationOption(180, 0.3),
                 new ScaleOption(1, 0.3));
 

@@ -1,22 +1,22 @@
 package com.bhaptics.haptic.models.tact;
 
 public class DotModeObject {
-    private int Index;
-    private float Intensity;
+    private int index;
+    private float intensity;
 
     public int getIndex() {
-        return Index;
+        return index;
     }
 
     public void setIndex(int index) {
-        Index = index;
+        this.index = index;
     }
 
     public float getIntensity() {
-        return Intensity;
+        return intensity;
     }
 
     public void setIntensity(float intensity) {
-        Intensity = intensity;
+        this.intensity = intensity;
     }
 }

@@ -1,40 +1,40 @@
 package com.bhaptics.haptic.models.tact;
 
 public class DotModeObjectCollection {
-    private int StartTime;
-    private int EndTime;
-    private String PlaybackType;
-    private  DotModeObject[] PointList;
+    private int startTime;
+    private int endTime;
+    private String playbackType;
+    private  DotModeObject[] pointList;
 
     public int getStartTime() {
-        return StartTime;
+        return startTime;
     }
 
     public void setStartTime(int startTime) {
-        StartTime = startTime;
+        this.startTime = startTime;
     }
 
     public int getEndTime() {
-        return EndTime;
+        return endTime;
     }
 
     public void setEndTime(int endTime) {
-        EndTime = endTime;
+        this.endTime = endTime;
     }
 
     public String getPlaybackType() {
-        return PlaybackType;
+        return playbackType;
     }
 
     public void setPlaybackType(String playbackType) {
-        PlaybackType = playbackType;
+        this.playbackType = playbackType;
     }
 
     public DotModeObject[] getPointList() {
-        return PointList;
+        return pointList;
     }
 
     public void setPointList(DotModeObject[] pointList) {
-        PointList = pointList;
+        this.pointList = pointList;
     }
 }
