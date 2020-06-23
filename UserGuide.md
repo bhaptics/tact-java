@@ -28,6 +28,13 @@ hapticPlayer.turnOff();
 
 ```
 
+### Initialize with HapticPlayerCallback
+```java
+HapticPlayer hapticPlayer = new HapticPlayerImpl(appId, appName, (connected) -> {
+    System.out.println("connected =========== " + connected);
+});
+
+```
 
 ### Tact File Examples 
 You can make your own tact files using [bHaptics Designer](https://designer.bhaptics.com)
