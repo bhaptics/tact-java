@@ -18,8 +18,14 @@ public class HapticPlayerTest extends TestCase {
         super.setUp();
         String appId = "com.bhaptics.sample";
         String appName = "Sample Java App";
-        hapticPlayer = new HapticPlayerImpl(appId, appName, (connected) -> {
+        hapticPlayer = new HapticPlayerImpl(appId, appName, true, (connected) -> {
             System.out.println("connected =========== " + connected);
+
+            if (connected) {
+                registerFiles();
+                System.out.println("registerFiles()");
+            }
+
         });
     }
 
@@ -62,11 +68,7 @@ public class HapticPlayerTest extends TestCase {
         // wait for connection
         sleep(1000);
 
-        registerFiles();
 
-
-
-        sleep(1000);
         System.out.println("skelettonArrowSmallFront");
 
         hapticPlayer.submitRegistered("skelettonArrowSmallFront");
