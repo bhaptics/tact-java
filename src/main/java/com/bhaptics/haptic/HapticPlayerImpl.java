@@ -33,6 +33,11 @@ public class HapticPlayerImpl implements HapticPlayer {
         callbacks.add(hapticPlayerCallback);
     }
 
+    public HapticPlayerImpl(String appId, String appName, boolean retryConnect, HapticPlayerCallback hapticPlayerCallback) {
+        this(appId, appName, retryConnect);
+        callbacks.add(hapticPlayerCallback);
+    }
+
 
     HapticPlayerCallback hapticPlayerCallback = new HapticPlayerCallback() {
         @Override
